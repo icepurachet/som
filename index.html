@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f56735"><meta name="description" content="สุ่มมื้ออร่อยในกรุงเทพฯ และหาเมนูตามงบ พร้อมแหล่งอ้างอิงราคา">
+  <title>ส้ม — วันนี้กินอะไรดี?</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🍊%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css"><script defer src="data.js"></script><script defer src="app.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">ข้ามไปเนื้อหา</a>
+<header class="site-header"><a class="brand" href="#">ส้ม<span class="brand-dot">✳</span><small>som</small></a><nav aria-label="เมนูหลัก"><a href="#randomizer">ให้ส้มสุ่ม</a><a href="#explore">หาเมนูตามงบ</a><a href="#sources">ที่มาราคา ↗</a></nav><span class="city">⌖ กรุงเทพฯ</span></header>
+<main id="main">
+  <section class="hero">
+    <div><span class="eyebrow"><i></i> ผู้ช่วยตัดสินใจของคนหิว</span><h1>คิดไม่ออกว่า<br>กินอะไร? <em>ให้ส้มสุ่ม!</em></h1><p>มื้ออร่อยเริ่มที่การกดสุ่ม เลือกงบที่ใช่<br class="desktop"> แล้วไปเจอเมนูใหม่ ๆ จากร้านจริงในกรุงเทพฯ</p><a class="primary hero-link" href="#randomizer">เริ่มสุ่มความอร่อย <span>↗</span></a><div class="hero-note"><span>✦ ร้านจริง</span><span>✦ มีที่มาราคา</span><span>✦ ไม่ต้องสมัคร</span></div></div>
+    <div class="hero-art" aria-hidden="true"><span class="art-caption">มื้อนี้…มีคำตอบแล้ว!</span><div class="orbit"></div><div class="food-plate"><div class="rice"></div><div class="curry"><i></i><i></i><i></i><i></i><i></i></div><div class="egg"><b></b></div><span class="leaf l1">❧</span><span class="leaf l2">❧</span></div><span class="float-chip chip-one">🍳 อะไรก็ได้ ที่อร่อย</span><span class="float-chip chip-two">งบเท่าไหร่ ก็เลือกได้ ฿</span><span class="spark s1">✳</span><span class="spark s2">✦</span></div>
+  </section>
+  <section id="randomizer" class="random-section"><div class="section-heading"><div><span class="eyebrow">01 / RANDOM PICK</span><h2>วันนี้อยากสุ่มอะไร?</h2></div><p>เลือกโหมด แล้วให้ส้มช่วยตัดสินใจ</p></div>
+    <div class="random-layout"><div class="modes" id="modes" role="group" aria-label="โหมดสุ่ม"></div><div class="pick-panel"><div class="pick-top"><span id="mode-caption">สุ่มอาหาร</span><span class="pill">โอกาสเจอของอร่อย ✦</span></div><div id="result" class="result" role="status" aria-live="polite"><span class="result-icon">🍽️</span><h3>มื้อนี้ ให้โชคเลือกให้</h3><p>ตั้งงบด้านล่าง หรือกดสุ่มได้เลย</p></div><button class="primary roll" id="roll" type="button">⤨ สุ่มเลย!</button><p class="pick-foot">ใช้ช่วงราคาและตัวกรองด้านล่าง · สุ่มงบจะใช้ช่วงราคาเท่านั้น</p></div></div>
+  </section>
+  <section id="explore"><div class="section-heading"><div><span class="eyebrow">02 / FIND YOUR BITE</span><h2>งบนี้ ซื้ออะไรได้บ้าง?</h2></div><span class="source-count" id="data-count"></span></div>
+    <form id="filters" class="filters" novalidate><div class="budget-field"><label for="budget">งบของคุณ / บาท</label><div class="input-wrap"><span>฿</span><input id="budget" type="number" min="0" max="10000" step="1" value="100" inputmode="numeric"><button id="random-budget" type="button" aria-label="สุ่มงบตามช่วงราคา">⤨ สุ่มงบ</button></div><div class="presets"><button type="button" data-budget="50">50</button><button type="button" data-budget="100">100</button><button type="button" data-budget="150">150</button><button type="button" data-budget="200">200</button></div></div><div><label for="min-price">ช่วงราคาเมนู / บาท</label><div class="price-range"><input id="min-price" aria-label="ราคาต่ำสุด" type="number" min="0" max="10000" step="1" value="0"><span>–</span><input id="max-price" aria-label="ราคาสูงสุด" type="number" min="0" max="10000" step="1" value="200"></div><small>สุ่มงบเป็นจำนวนเต็มในช่วงนี้</small></div><div><label for="search">ค้นหาเมนูหรือร้าน</label><input id="search" type="search" placeholder="เช่น กะเพรา ชาตรามือ…"><label class="sort-label" for="sort">เรียงตาม <select id="sort"><option value="price">ราคาน้อย → มาก</option><option value="desc">ราคามาก → น้อย</option><option value="name">ชื่อเมนู</option></select></label></div></form>
+    <p id="validation" class="validation" role="alert" hidden></p><div id="categories" class="categories" role="group" aria-label="ประเภทเมนู"></div><div class="results-heading"><p id="count" role="status"></p><button class="text-button" id="reset" type="button">ล้างตัวกรอง ↺</button></div><div id="menu-grid" class="menu-grid"></div>
+  </section>
+  <section id="sources" class="sources"><div><span class="eyebrow">รู้ที่มา ก่อนออกไปอร่อย</span><h2>ราคาจริง มีแหล่งอ้างอิง</h2><p>ตรวจหน้าเว็บวันที่ <strong>29 กันยายน 2569</strong> · เป็นข้อมูลที่บันทึกไว้ ไม่ใช่ราคาสดอัตโนมัติ</p><p>เทียบงบจากราคาเมนู 1 รายการ ไม่รวมค่าส่ง ค่าบริการ ภาษีหรือท็อปปิ้งที่อาจเพิ่มตอนชำระเงิน ราคาหน้าร้านอาจต่างจากเดลิเวอรี และแต่ละแหล่งไม่ได้ระบุวันปรับราคาล่าสุด โปรดตรวจอีกครั้งก่อนสั่ง</p></div><div id="source-list"></div></section>
+</main><footer><a class="brand" href="#">ส้ม<span class="brand-dot">✳</span></a><p>ลดเวลาคิด เพิ่มเวลาอร่อย</p><span>ทำมาเพื่อวันที่ “อะไรก็ได้” 🍊</span></footer>
+<noscript>กรุณาเปิด JavaScript เพื่อใช้การสุ่มและค้นหาเมนู</noscript>
+</body></html>
