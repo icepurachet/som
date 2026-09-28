@@ -3,12 +3,29 @@ const DATA = window.SOM_DATA;
 const $ = id => document.getElementById(id);
 const MODES = [
   ['food','🍳','สุ่มอาหาร'], ['budget','💸','สุ่มงบราคา'], ['restaurant','📍','สุ่มร้าน'],
-  ['type','🍱','สุ่มประเภทอาหาร'], ['dessert','🍧','สุ่มของหวาน'], ['drink','🧋','สุ่มเครื่องดื่ม'], ['challenge','✨','ชาเลนจ์วันนี้']
+  ['type','🍱','สุ่มประเภทอาหาร'], ['dessert','🍧','สุ่มของหวาน'], ['drink','🧋','สุ่มเครื่องดื่ม'], ['challenge','✨','ชาเลนจ์วันนี้'], ['custom','📝','ตัวเลือกของฉัน']
 ];
 let mode = 'food', category = 'ทั้งหมด', previous = {}, timer;
 const money = n => new Intl.NumberFormat('th-TH', {maximumFractionDigits:2}).format(n);
 const escapeHTML = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const unique = list => [...new Set(list)];
+const CUSTOM_KEY = 'som.custom-options.v1';
+function customOptions() {
+  return unique($('custom-options').value.split(/\r?\n/).map(s => s.trim()).filter(Boolean));
+}
+function updateCustomOptions(save = false) {
+  const count = customOptions().length;
+  $('custom-count').textContent = `${count} ตัวเลือก · ข้ามบรรทัดว่างและรวมชื่อที่ซ้ำกัน`;
+  if (save) {
+    try {
+      if ($('custom-options').value.trim()) localStorage.setItem(CUSTOM_KEY, $('custom-options').value);
+      else localStorage.removeItem(CUSTOM_KEY);
+      $('custom-storage').textContent = 'จำรายการไว้ในเบราว์เซอร์นี้แล้ว';
+    } catch {
+      $('custom-storage').textContent = 'เบราว์เซอร์นี้บันทึกรายการไม่ได้ แต่ยังสุ่มได้ตามปกติ';
+    }
+  }
+}
 function readFilters() {
   const raw = ['budget','min-price','max-price'].map(id => $(id).value.trim());
   const [budget,min,max] = raw.map(Number);
@@ -46,7 +63,9 @@ function render() {
 }
 function resetResult() {
   clearTimeout(timer); $('roll').disabled = false; $('roll').textContent = '⤨ สุ่มเลย!';
-  $('result').innerHTML = '<span class="result-icon">🍽️</span><h3>พร้อมเลือกความอร่อยแล้ว</h3><p>กดสุ่มเพื่อเลือกจากตัวกรองปัจจุบัน</p>';
+  $('result').innerHTML = mode === 'custom'
+    ? '<span class="result-icon">📝</span><h3>มีตัวเลือกแล้ว แต่เลือกไม่ถูก?</h3><p>ใส่เมนูด้านบน แล้วให้ส้มเลือกให้หนึ่งอย่าง</p>'
+    : '<span class="result-icon">🍽️</span><h3>พร้อมเลือกความอร่อยแล้ว</h3><p>กดสุ่มเพื่อเลือกจากตัวกรองปัจจุบัน</p>';
 }
 function showResult(icon,title,detail='',extra='') {
   $('result').innerHTML = `<span class="result-icon">${icon}</span><h3>${escapeHTML(title)}</h3><p>${escapeHTML(detail)}</p>${extra}`;
@@ -69,6 +88,16 @@ function rollBudget() {
   showResult('💸',`มื้อนี้มีงบ ${money(n)} บาท`,'อัปเดตรายการที่ซื้อได้ด้านล่างแล้ว · งบนี้ยังไม่รวมค่าใช้จ่ายเพิ่ม');
 }
 function draw() {
+  if (mode === 'custom') {
+    const options = customOptions();
+    if (options.length < 2) {
+      showResult('📝','เพิ่มอย่างน้อย 2 ตัวเลือก','พิมพ์เมนูละหนึ่งบรรทัด โดยใช้ชื่อที่ต่างกัน');
+      return;
+    }
+    // Every draw includes all options with equal probability; repeats are allowed.
+    showResult('🎉', options[Math.floor(Math.random() * options.length)], `เลือกจาก ${options.length} ตัวเลือกของคุณ · ไม่ใช้ตัวกรองงบ`);
+    return;
+  }
   if (mode === 'budget') { rollBudget(); return; }
   const f = readFilters();
   if (f.error) { showResult('🔎','ตรวจตัวเลขก่อนสุ่ม',f.error); return; }
@@ -92,6 +121,10 @@ function draw() {
 }
 function selectMode(id) {
   mode = id; resetResult();
+  $('custom-editor').hidden = mode !== 'custom';
+  $('pick-foot').textContent = mode === 'custom'
+    ? 'สุ่มจากรายการของคุณเท่านั้น · ทุกตัวเลือกมีโอกาสเท่ากันและอาจสุ่มซ้ำได้'
+    : 'ใช้ช่วงราคาและตัวกรองด้านล่าง · สุ่มงบจะใช้ช่วงราคาเท่านั้น';
   for (const b of $('modes').children) b.setAttribute('aria-pressed',String(b.dataset.mode===mode));
   $('mode-caption').textContent = MODES.find(m=>m[0]===mode)[2];
 }
@@ -108,4 +141,15 @@ for(const b of document.querySelectorAll('[data-budget]')) b.addEventListener('c
 $('reset').addEventListener('click',()=>{$('filters').reset();category='ทั้งหมด';for(const el of $('categories').children)el.setAttribute('aria-pressed',String(el.dataset.category===category));resetResult();render();});
 $('data-count').textContent = `${DATA.menus.length} เมนู · ${Object.keys(DATA.sources).length} ร้าน/สาขา`;
 $('source-list').innerHTML = Object.values(DATA.sources).map(s=>`<a class="source-link" href="${escapeHTML(s.url)}" target="_blank" rel="noopener noreferrer">${escapeHTML(s.restaurant)} ↗<span>${escapeHTML(s.branch)} · ${s.label}</span></a>`).join('');
+try {
+  const saved = localStorage.getItem(CUSTOM_KEY);
+  if (saved) $('custom-options').value = saved.slice(0,10000);
+} catch {
+  $('custom-storage').textContent = 'เบราว์เซอร์นี้ไม่อนุญาตให้จำรายการ แต่ยังสุ่มได้ตามปกติ';
+}
+$('custom-options').addEventListener('input',()=>{resetResult();updateCustomOptions(true);});
+$('clear-custom').addEventListener('click',()=>{
+  $('custom-options').value = ''; resetResult(); updateCustomOptions(true); $('custom-options').focus();
+});
+updateCustomOptions();
 render();
